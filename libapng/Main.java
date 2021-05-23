@@ -47,8 +47,6 @@ public class Main {
             render.play();
         } catch (ApngException e){
             e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

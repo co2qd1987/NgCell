@@ -1,9 +1,11 @@
+import net.ngcell.apng.ApngException;
 import net.ngcell.apng.ID;
 import net.ngcell.apng.ApngRenderImpl;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -23,8 +25,10 @@ public final class MainRender extends ApngRenderImpl {
             System.out.println(getAnimateControl().toString());
             System.out.println(getFrameControl().get(0).toString() + " isSkipFirstFrame: " + isSkipFirstFrame());
             System.out.println("-----End-----");
-        } catch (Exception e) {
+        } catch (ApngException e) {
             log.log(Level.WARNING, "could not play", e);
+        } catch (IOException e) {
+            log.log(Level.WARNING, "could not write image file", e);
         }
     }
 
