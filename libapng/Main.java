@@ -2,6 +2,7 @@ import net.ngcell.apng.Apng;
 import net.ngcell.apng.ApngException;
 import net.ngcell.apng.ApngImpl;
 import net.ngcell.apng.ApngRender;
+import net.ngcell.apng.j2se.J2SEImage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -15,7 +16,7 @@ public class Main {
         paramImageG2D.setColor(Color.RED);
         paramImageG2D.fillRect(0,0,320,240);
         paramImageG2D.setColor(Color.BLACK);
-        paramImageG2D.setFont(new Font("TimesRoman",Font.PLAIN,12));
+        paramImageG2D.setFont(new Font("Consolas",Font.PLAIN,20));
         paramImageG2D.drawString("This",80,100);
 
         BufferedImage paramBuff = new BufferedImage(320,240,BufferedImage.TYPE_INT_ARGB);
@@ -23,7 +24,7 @@ public class Main {
         paramG2D.setColor(Color.GREEN);
         paramG2D.fillRect(0,0,320,240);
         paramG2D.setColor(Color.BLACK);
-        paramG2D.setFont(new Font("TimesRoman",Font.PLAIN,12));
+        paramG2D.setFont(new Font("Consolas",Font.PLAIN,20));
         paramG2D.drawString("is",100,100);
 
         BufferedImage paramBuff1 = new BufferedImage(320,240,BufferedImage.TYPE_INT_ARGB);
@@ -31,16 +32,16 @@ public class Main {
         paramG2D1.setColor(Color.BLUE);
         paramG2D1.fillRect(0,0,320,240);
         paramG2D1.setColor(Color.BLACK);
-        paramG2D1.setFont(new Font("TimesRoman",Font.PLAIN,12));
+        paramG2D1.setFont(new Font("Consolas",Font.PLAIN,20));
         paramG2D1.drawString("example",120,100);
 
         Apng apng = new ApngImpl();
         
         ApngRender render = new MainRender();
         try{
-            apng.addFrame(paramImage,500);
-            apng.addFrame(paramBuff,500);
-            apng.addFrame(paramBuff1,500);
+            apng.addFrame(new J2SEImage(paramImage),500);
+            apng.addFrame(new J2SEImage(paramBuff),500);
+            apng.addFrame(new J2SEImage(paramBuff1),500);
             apng.create(new File(Main.class.getResource("").getPath() + "example.png"));
 
             render.setAnimate(new File(Main.class.getResource("").getPath() + "example.png"));

@@ -1,13 +1,7 @@
-import net.ngcell.apng.ApngException;
-import net.ngcell.apng.ID;
-import net.ngcell.apng.ApngRenderImpl;
+import net.ngcell.apng.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
-import java.util.logging.Level;
 
 public final class MainRender extends ApngRenderImpl {
 
@@ -16,9 +10,13 @@ public final class MainRender extends ApngRenderImpl {
         ID id = new ID();
         try{
 
-            List<BufferedImage> frames = decoder();
-            for(BufferedImage image : frames) {
-                ImageIO.write(image,"PNG",new File(Main.class.getResource("").getPath() + "IMG" + id.getID() + ".png"));
+            /*Output PNG byte stream*/
+            List<ByteArrayOutputStream> frames = decoder();
+            for(ByteArrayOutputStream byteArray : frames) {
+                FileOutputStream file = new FileOutputStream(new File(Main.class.getResource("").getPath() + "IMG" + id.getID() + ".png"));
+                file.write(byteArray.toByteArray());
+                byteArray.close();
+                file.close();
             }
             System.out.println("-----" + getName() + "-----");
             System.out.println("Hight: " + getHight() + ",Width: " + getWidth());
@@ -26,9 +24,9 @@ public final class MainRender extends ApngRenderImpl {
             System.out.println(getFrameControl().get(0).toString() + " isSkipFirstFrame: " + isSkipFirstFrame());
             System.out.println("-----End-----");
         } catch (ApngException e) {
-            log.log(Level.WARNING, "could not play", e);
+            ApngUtilities.getLog().log(ApngLog.WARNING, "could not play", e);
         } catch (IOException e) {
-            log.log(Level.WARNING, "could not write image file", e);
+            ApngUtilities.getLog().log(ApngLog.WARNING, "could not write image file", e);
         }
     }
 
