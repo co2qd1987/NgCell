@@ -56,23 +56,30 @@ public final class MainRender extends ApngRenderImpl {
         ID id = new ID();
         try{
             MainWindows windows = new MainWindows(getWidth(),getHight());
-            List<ByteArrayOutputStream> frames = decoder();
+            List<OutputStream> frames = decoder();
+
+            for(OutputStream byteArray : frames) {
+                FileOutputStream file = new FileOutputStream(new File(Main.class.getResource("").getPath() + "IMG" + id.getID() + ".png"));
+                file.write(((ByteArrayOutputStream)byteArray).toByteArray());
+                byteArray.close();
+                file.close();
+            }
             List<FrameControl> fCtrl = getFrameControl();
             //MainWindows windows = new MainWindows(getWidth(),getHight());
             if(isSkipFirstFrame()) {
-                for(int i = 0;i < fCtrl.size();i++) {
+                for(int i = 1;i < fCtrl.size();i++) {
                     windows.setFrameXOffset(fCtrl.get(i).getXOffset());
                     windows.setFrameYOffset(fCtrl.get(i).getYOffset());
-                    windows.setFrameDelay(fCtrl.get(i).getDelay());
-                    ByteArrayInputStream stream = new ByteArrayInputStream(frames.get(i + 1).toByteArray());
+                    windows.setFrameDelay(fCtrl.get(i).getDelay() / 2);
+                    ByteArrayInputStream stream = new ByteArrayInputStream(((ByteArrayOutputStream)frames.get(i)).toByteArray());
                     windows.addFrame(ImageIO.read(stream));
                 }
             } else {
                 for(int i = 0;i < fCtrl.size();i++) {
                     windows.setFrameXOffset(fCtrl.get(i).getXOffset());
                     windows.setFrameYOffset(fCtrl.get(i).getYOffset());
-                    windows.setFrameDelay(fCtrl.get(i).getDelay());
-                    ByteArrayInputStream stream = new ByteArrayInputStream(frames.get(i).toByteArray());
+                    windows.setFrameDelay(fCtrl.get(i).getDelay() / 2);
+                    ByteArrayInputStream stream = new ByteArrayInputStream(((ByteArrayOutputStream)frames.get(i)).toByteArray());
                     windows.addFrame(ImageIO.read(stream));
                 }
             }
@@ -80,7 +87,7 @@ public final class MainRender extends ApngRenderImpl {
             System.out.println("-----" + getName() + "-----");
             System.out.println("Hight: " + getHight() + ",Width: " + getWidth());
             System.out.println(getAnimateControl().toString());
-            System.out.println(getFrameControl().get(0).toString() + " isSkipFirstFrame: " + isSkipFirstFrame());
+            System.out.println(getFrameControl().get(0).toString() + " isSkipFirstFrame: " + isSkipFirstFrame() + ",FrameControlSize: " + getFrameControl().size());
             System.out.println("-----End-----");
         } catch (ApngException e) {
             ApngUtilities.getLog().log(ApngLog.WARNING, "could not play", e);

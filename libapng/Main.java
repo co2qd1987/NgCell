@@ -44,7 +44,8 @@ public class Main {
             apng.addFrame(new J2SEImage(paramBuff1),500);
             apng.create(new File(Main.class.getResource("").getPath() + "example.png"));
 
-            render.setAnimate(new File(Main.class.getResource("").getPath() + "example.png"));
+            //render.setAnimate(new File(Main.class.getResource("").getPath() + "example.png"));
+            render.setAnimate(new File(Main.class.getResource("").getPath() + "000.png"));
             render.play();
         } catch (ApngException e){
             e.printStackTrace();
