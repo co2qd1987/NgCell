@@ -1,5 +1,4 @@
 import net.ngcell.apng.Apng;
-import net.ngcell.apng.ApngException;
 import net.ngcell.apng.ApngImpl;
 import net.ngcell.apng.ApngRender;
 import net.ngcell.apng.j2se.J2SEImage;
@@ -42,12 +41,13 @@ public class Main {
             apng.addFrame(new J2SEImage(paramImage),500);
             apng.addFrame(new J2SEImage(paramBuff),500);
             apng.addFrame(new J2SEImage(paramBuff1),500);
-            apng.create(new File(Main.class.getResource("").getPath() + "example.png"));
+            apng.produce(new File(Main.class.getResource("").getPath() + "example.png"));
 
-            //render.setAnimate(new File(Main.class.getResource("").getPath() + "example.png"));
-            render.setAnimate(new File(Main.class.getResource("").getPath() + "000.png"));
+            render.setAnimate(new File(Main.class.getResource("").getPath() + "example.png"));
+            render.getAllFrame();
+            //render.getFrame(-1);
             render.play();
-        } catch (ApngException e){
+        } catch (Exception e){
             e.printStackTrace();
         }
     }

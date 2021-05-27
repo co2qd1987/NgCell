@@ -1,106 +1,141 @@
 import net.ngcell.apng.*;
 import net.ngcell.apng.chunk.FrameControl;
+import net.ngcell.apng.j2se.J2SEView;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import javax.swing.JFrame;
+import java.awt.Dimension;
 import java.io.*;
 import java.util.List;
 
 public final class MainRender extends ApngRenderImpl {
-    private class MainWindows {
-        private JFrame frame;
-        private AnimateView view;
+    private JFrame view = null;
+    private J2SEView render = null;
+    private List<OutputStream> frames = null;
+    private List<FrameControl> frameCtrl = null;
+    private int width = 0;
+    private int height = 0;
 
-        public MainWindows(int width,int height) {
-            this.frame = new JFrame();
-            frame.setPreferredSize(new Dimension(width,height));
-            frame.setMaximumSize(new Dimension(width,height ));
-            view = new AnimateView();
-            view.setMaximumSize(new Dimension(width, height));
-            view.setPreferredSize(new Dimension(width,height));
-            frame.add(view);
-            frame.setContentPane(view);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.pack();
-        }
 
-        public void setFrameXOffset(int x) {
-            view.setXOffset(x);
-        }
+    public MainRender(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
 
-        public void setFrameYOffset(int y) {
-            view.setYOffset(y);
-        }
+    public MainRender() {
 
-        public void setFrameDelay(int time) {
-            view.setDelay(time);
-        }
+    }
 
-        public void addFrame(BufferedImage image) {
-            view.addFrame(image);
-        }
+    public void init() {
+        try{
+            if(this.frames == null) {
+                this.frames = decoder();
+            }
+            this.frameCtrl = getFrameControl();
+            this.render = new J2SEView();
+            this.view = new JFrame();
+            int tmpWidth = getWidth();
+            if(tmpWidth <= 0) {
+                tmpWidth = 512;
+            }
+            int tmpHeight = getHight();
+            if(tmpHeight <= 0) {
+                tmpHeight = 512;
+            }
 
-        public void start() {
-            frame.setVisible(true);
-            frame.setResizable(false);
-            view.start();
+            if(this.width <= 0 || height <= 0) {
+                render.setMaximumSize(new Dimension(tmpWidth, tmpHeight));
+                render.setPreferredSize(new Dimension(tmpWidth, tmpHeight));
+                view.setPreferredSize(new Dimension(tmpWidth, tmpHeight));
+                view.setMaximumSize(new Dimension(tmpWidth, tmpHeight));
+            } else {
+                view.setPreferredSize(new Dimension(width,height));
+                view.setMaximumSize(new Dimension(width,height ));
+                render.setMaximumSize(new Dimension(width, height));
+                render.setPreferredSize(new Dimension(width,height));
+            }
+            view.setContentPane(render);
+            view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            view.pack();
+            view.setVisible(false);
+            view.setResizable(false);
+        } catch (ApngException e) {
+            ApngUtility.getLog().log(ApngLog.WARNING, "ApngRender: Could not init", e);
+        } catch (IOException e) {
+            ApngUtility.getLog().log(ApngLog.WARNING, "ApngRender: Could not read image stream", e);
         }
     }
 
 
-
     @Override
     public void play() {
-        ID id = new ID();
-        try{
-            MainWindows windows = new MainWindows(getWidth(),getHight());
-            List<OutputStream> frames = decoder();
+        init();
+        int sequence = 0;
+        if(isSkipFirstFrame()) {
+            sequence = 1;
+        }
+        for(int i = sequence;i < frameCtrl.size();i++) {
+            render.addXOffset(frameCtrl.get(i).getXOffset());
+            render.addYOffset(frameCtrl.get(i).getYOffset());
+            render.addDelay(frameCtrl.get(i).getDelay());
+            render.addFrame(new ByteArrayInputStream(((ByteArrayOutputStream)frames.get(i)).toByteArray()));
+        }
+        render.start();
+        view.setVisible(true);
+        debug();
+    }
 
+    public void stop() {
+        render.stop();
+        view.setVisible(false);
+        view.dispose();
+
+    }
+
+    public void getAllFrame() {
+        try {
+            ID id = new ID();
+            if(this.frames == null) {
+                this.frames = decoder();
+            }
             for(OutputStream byteArray : frames) {
                 FileOutputStream file = new FileOutputStream(new File(Main.class.getResource("").getPath() + "IMG" + id.getID() + ".png"));
                 file.write(((ByteArrayOutputStream)byteArray).toByteArray());
                 byteArray.close();
                 file.close();
             }
-            List<FrameControl> fCtrl = getFrameControl();
-            //MainWindows windows = new MainWindows(getWidth(),getHight());
-            if(isSkipFirstFrame()) {
-                for(int i = 1;i < fCtrl.size();i++) {
-                    windows.setFrameXOffset(fCtrl.get(i).getXOffset());
-                    windows.setFrameYOffset(fCtrl.get(i).getYOffset());
-                    windows.setFrameDelay(fCtrl.get(i).getDelay() / 2);
-                    ByteArrayInputStream stream = new ByteArrayInputStream(((ByteArrayOutputStream)frames.get(i)).toByteArray());
-                    windows.addFrame(ImageIO.read(stream));
-                }
-            } else {
-                for(int i = 0;i < fCtrl.size();i++) {
-                    windows.setFrameXOffset(fCtrl.get(i).getXOffset());
-                    windows.setFrameYOffset(fCtrl.get(i).getYOffset());
-                    windows.setFrameDelay(fCtrl.get(i).getDelay() / 2);
-                    ByteArrayInputStream stream = new ByteArrayInputStream(((ByteArrayOutputStream)frames.get(i)).toByteArray());
-                    windows.addFrame(ImageIO.read(stream));
-                }
-            }
-            windows.start();
-            System.out.println("-----" + getName() + "-----");
-            System.out.println("Hight: " + getHight() + ",Width: " + getWidth());
-            System.out.println(getAnimateControl().toString());
-            System.out.println(getFrameControl().get(0).toString() + " isSkipFirstFrame: " + isSkipFirstFrame() + ",FrameControlSize: " + getFrameControl().size());
-            System.out.println("-----End-----");
+            debug();
         } catch (ApngException e) {
-            ApngUtilities.getLog().log(ApngLog.WARNING, "could not play", e);
+            ApngUtility.getLog().log(ApngLog.WARNING, "ApngRender: Could not read image for stream",e);
         } catch (IOException e) {
-            ApngUtilities.getLog().log(ApngLog.WARNING, "could not write image file", e);
+            ApngUtility.getLog().log(ApngLog.WARNING,"ApngRender: Could not read stream", e);
         }
     }
 
-    public void pause() {
-
+    public void getFrame(int id) {
+        try {
+            this.frames = decoder();
+            if(id < 0) {
+                id = 0;
+            }
+            ByteArrayOutputStream byteSource = (ByteArrayOutputStream) frames.get(id);
+            FileOutputStream file = new FileOutputStream(new File(Main.class.getResource("").getPath() + "IMG" + id + ".png"));
+            file.write(byteSource.toByteArray());
+            byteSource.close();
+            file.close();
+            debug();
+        } catch (ApngException e) {
+            ApngUtility.getLog().log(ApngLog.WARNING, "ApngRender: Could not read image for stream",e);
+        } catch (IOException e) {
+            ApngUtility.getLog().log(ApngLog.WARNING,"ApngRender: Could not read stream", e);
+        }
     }
 
-    public void stop() {
-
+    public void debug() {
+        System.out.println("-----" + getName() + "-----");
+        System.out.println("Hight: " + getHight() + ",Width: " + getWidth());
+        System.out.println(getAnimateControl().toString());
+        System.out.println("SkipFirstFrame: " + isSkipFirstFrame());
+        System.out.println("FrameControlSize: " + getFrameControl().size() + ",FristFrameControl: " +getFrameControl().get(0).toString());
+        System.out.println("-----End-----");
     }
 }
