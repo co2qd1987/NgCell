@@ -1,5 +1,21 @@
 interface that needs to be overridden:
     interface ApngImage {         //J2SEImage as ApngImage
+      int IMAGE_BYTE_BGR = 5;
+      int IMAGE_BYTE_ABGR = 6;
+      int IMAGE_BYTE_ABGR_PRE = 7;
+      int IMAGE_BYTE_BINARY = 12;
+      int IMAGE_BYTE_GREY = 10;
+      int IMAGE_BYTE_INDEX = 13;
+      int IMAGE_CUSTOM = 0;
+      int IMAGE_INT_ARGB = 2;
+      int IMAGE_INT_ARGB_PRE = 3;
+      int IMAGE_INT_BGR = 4;
+      int IMAGE_INT_RGB = 1;
+      int IMAGE_US_555_RGB = 9;
+      int IMAGE_US_565_RGB = 8;
+      int IMAGE_US_GREY = 11;
+      int IMAGE_US_4444_ARGB = 14;
+
       int getWidth();
       int getHeight();
       ApngImage createBlankImage(int width, int height, ApngImage image);
@@ -27,6 +43,8 @@ interface that needs to be overridden:
         abstract void play();
         abstract void pause();
         abstract void stop();
+        abstract void getAllFrame();
+        abstract void getFrame(int id);
     }
 
 
@@ -64,8 +82,10 @@ exposed methods:
     }
 
     final class ApngUtilities {
-        static ApngLog getLog();
+        static ApngLog getLog();    //Default: J2SELog
         static void setLog(ApngLog loger);
+        static ApngImage getImage();  //Default: J2SEImage
+        static void setImage(ApngImage image);
     }
 
     enum BlendOp {

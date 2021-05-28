@@ -113,7 +113,9 @@ public final class MainRender extends ApngRenderImpl {
 
     public void getFrame(int id) {
         try {
-            this.frames = decoder();
+            if(this.frames == null) {
+                this.frames = decoder();
+            }
             if(id < 0) {
                 id = 0;
             }
