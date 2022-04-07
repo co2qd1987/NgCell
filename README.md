@@ -4,6 +4,7 @@ NgCell is linux c/c++ lib emulation for java
 libapng used document:
 
 used interface:
+
     ApngImage {
         /*Image Type*/
         int IMAGE_BYTE_BGR = 5;
@@ -47,6 +48,7 @@ used interface:
     }
     
 used abstract class:
+
     ApngRenderImpl {
         /*Player control*/
         abstract void play();
@@ -56,7 +58,8 @@ used abstract class:
         abstract void getFrame(int id);
     }
     
-used class and method:
+used method:
+
     ApngImpl {
         /*Reset frame array*/
         void reset();
