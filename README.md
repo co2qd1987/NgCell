@@ -1,6 +1,11 @@
 # NgCell
 NgCell is linux c/c++ lib emulation for java
 
+libaot: A Offline Non-traditional Interactive System Library
+libnc: NC C/C++ Function Library On AOT
+libtype: NC C/C++ Type Library On AOT
+libapng: Apng Support Library for AOT
+
 libapng used document:
 
 used interface:
