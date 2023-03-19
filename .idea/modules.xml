@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/NgCell.iml" filepath="$PROJECT_DIR$/NgCell.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libaot/libaot.iml" filepath="$PROJECT_DIR$/libaot/libaot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libapng/libapng.iml" filepath="$PROJECT_DIR$/libapng/libapng.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libnc/libnc.iml" filepath="$PROJECT_DIR$/libnc/libnc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libtype/libtype.iml" filepath="$PROJECT_DIR$/libtype/libtype.iml" />
+    </modules>
+  </component>
+</project>

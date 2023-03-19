@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="libapng">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libapng/lib/libapng.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
